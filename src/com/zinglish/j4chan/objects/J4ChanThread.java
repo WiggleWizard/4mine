@@ -1,8 +1,10 @@
-package dataobjects.threads;
+package com.zinglish.j4chan.objects;
+
+import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Threads
+public class J4ChanThread
 {
 	// Number of the post
 	@SerializedName("no")

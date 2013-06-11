@@ -1,70 +1,75 @@
 package scraper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.lang.Thread;
+import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.zinglish.j4chan.J4Chan;
+import com.zinglish.j4chan.objects.J4ChanBoard;
+import com.zinglish.j4chan.objects.J4ChanThread;
 
-import dataobjects.threads.JsonThreads;
 
 public class Main
 {
+	static String board;
+	static int boardCheckInterval = 5;
+	static String imageSavePath = "/var/4chan";
+	
 	public static void main (String args[]) 
 	{
-		String url = "http://api.4chan.org/w/threads.json";
-	    
-		try 
+		// Assign variables based on the args put in
+		for(int i=0;i<args.length;i++)
 		{
-			URL json = new URL(url);
+			// Board
+			if(args[i].equals("-b"))
+			{
+				board = args[i + 1];
+			}
 			
-			HttpURLConnection connection = (HttpURLConnection) json.openConnection();
-			connection.addRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.36 Safari/537.36");
-			connection.connect();
+			// Interval between checking for new board threads
+			if(args[i].equals("-i"))
+			{
+				boardCheckInterval = Integer.valueOf(args[i + 1]);
+			}
 			
-			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-			String jsonString = "";
-	        String html;
-	        while ((html = in.readLine()) != null)
-	        {
-	        	jsonString += html;
-	        	//System.out.println(html);
-	        }
-	        
-	        in.close();
-	        connection.disconnect();
-	        
-	        // Deserialize JSON
-	        Gson gson = new Gson();
-	        JsonParser parser = new JsonParser();
-	        JsonArray Jarray = parser.parse(jsonString).getAsJsonArray();
-
-	        ArrayList<JsonThreads> lcs = new ArrayList<JsonThreads>();
-
-	        for(JsonElement obj : Jarray )
-	        {
-	        	String tmp = "{ \"pageObject\": " + obj.toString() + "}";
-	        	JsonThreads cse = gson.fromJson( tmp , JsonThreads.class);
-	        	System.out.println(cse.pageObject.page);
-	            lcs.add(cse);
-	        }
-		} 
-		catch (MalformedURLException e) 
+			// The file where all the images will be dumped
+			if(args[i].equals("-f"))
+			{
+				imageSavePath = args[i + 1];
+			}
+		}
+		
+		System.out.println("Using board: " + board);
+		System.out.println("Checking for new threads every " + boardCheckInterval + " minutes");
+		
+		// Initialize our static variables used for the loop
+		J4Chan j4Chan = new J4Chan();
+		
+		// Each loop checks the specified board for updates
+		while(true)
 		{
-			e.printStackTrace();
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
+			List<J4ChanBoard> boardThreads = j4Chan.getBoardThreads(board); // Get the threads that are currently on this board
+			
+			// For each page
+			for(J4ChanBoard boardThread : boardThreads)
+			{
+				System.out.println("Entering page " + boardThread.page.number);
+				// For each thread
+				for(J4ChanThread threadPage : boardThread.page.threads)
+				{
+					System.out.println(threadPage.number);
+				}
+				
+			}
+			
+			 // Wait until next check interval
+			try
+			{
+				Thread.sleep(boardCheckInterval * 60 * 1000);
+			}
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 }
