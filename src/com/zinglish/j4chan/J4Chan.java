@@ -8,6 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import com.zinglish.j4chan.objects.J4ChanBoard;
+import com.zinglish.j4chan.objects.J4ChanThread;
 
 public class J4Chan
 {
@@ -27,7 +28,7 @@ public class J4Chan
 		for(JsonElement obj : Jarray )
 		{
 			String tmp = "{ \"pageObject\": " + obj.toString() + "}"; // Create a fake object
-			J4ChanBoard tmpThread = gson.fromJson( tmp , J4ChanBoard.class);
+			J4ChanBoard tmpThread = gson.fromJson(tmp , J4ChanBoard.class);
 
 			chanThreads.add(tmpThread);
 		}
@@ -35,27 +36,18 @@ public class J4Chan
 		return chanThreads;
 	}
 	
-	public ArrayList<J4ChanBoard> getThreadPosts(String board, int threadNumber)
+	public J4ChanThread getThreadPosts(String board, int threadNumber)
 	{
 		String url = "http://api.4chan.org/" + board + "/res/" + threadNumber + ".json";
 
+		// Get the json as a long string
 		JsonInterface jsonInterface = new JsonInterface();
+		String tmp = jsonInterface.getJsonString(url);
 
 		// Convert the json array into an array of objects
 		Gson gson = new Gson();
-		JsonParser parser = new JsonParser();
-		JsonArray Jarray = parser.parse(jsonInterface.getJsonString(url)).getAsJsonArray();
-
-		ArrayList<J4ChanBoard> chanThreads = new ArrayList<J4ChanBoard>();
-
-		for(JsonElement obj : Jarray )
-		{
-			String tmp = "{ \"pageObject\": " + obj.toString() + "}"; // Create a fake object
-			J4ChanBoard tmpThread = gson.fromJson( tmp , J4ChanBoard.class);
-
-			chanThreads.add(tmpThread);
-		}
+		J4ChanThread tmpThread = gson.fromJson(tmp , J4ChanThread.class);
 		
-		return chanThreads;
+		return tmpThread;
 	}
 }
