@@ -1,4 +1,4 @@
-package scraper;
+package com.zinglish.j4chan;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,6 +8,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import scraper.Main;
+
 
 
 public class ImageDownloader implements Runnable
@@ -36,7 +39,7 @@ public class ImageDownloader implements Runnable
 					connection.connect();
 					
 					InputStream in = connection.getInputStream();
-					OutputStream file = new FileOutputStream("/tmp/" + imageFilename);
+					OutputStream file = new FileOutputStream(Main.imageSavePath + imageFilename);
 			
 					byte[] buf=new byte[2048];
 					int bytes_read;

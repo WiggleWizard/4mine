@@ -1,4 +1,4 @@
-package scraper;
+package com.zinglish.j4chan;
 
 public class PseudoImage
 {
