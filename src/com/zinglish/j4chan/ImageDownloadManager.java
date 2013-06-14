@@ -1,21 +1,22 @@
 package com.zinglish.j4chan;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ImageDownloadManager
 {
-	List<ImageDownloader> imageDownloaderObjects = new ArrayList<ImageDownloader>();
-	List<Thread> imageDownloadThreads = new ArrayList<Thread>();
+	ImageDownloader[] imageDownloaderObjects;
+	Thread[] imageDownloadThreads;
 	
-	private int threadCount;
-	private int threadLoadID = 0;
+	public Map<String, PseudoImage> imageStack = new HashMap<String, PseudoImage>();
+	
+	int threadCount;
 	
 	public ImageDownloadManager(int threadCount)
 	{
 		this.threadCount = threadCount;
-		
-		
+		this.imageDownloaderObjects = new ImageDownloader[threadCount];
+		this.imageDownloadThreads = new Thread[threadCount];
 	}
 	
 	/**
@@ -25,11 +26,12 @@ public class ImageDownloadManager
 	 */
 	public void initializeThreads()
 	{
-		
-	}
-	
-	public void addImage(PseudoImage image)
-	{
-		
+		for(int i=0;i<threadCount;i++)
+		{
+			imageDownloaderObjects[i] = new ImageDownloader(this);
+			
+			imageDownloadThreads[i] = new Thread(imageDownloaderObjects[i]);
+			imageDownloadThreads[i].start();
+		}
 	}
 }
