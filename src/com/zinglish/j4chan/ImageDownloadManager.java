@@ -8,16 +8,16 @@ public class ImageDownloadManager
 	ImageDownloader[] imageDownloaderObjects;
 	Thread[] imageDownloadThreads;
 	
-	Map<String, PseudoImage> imageStack = new HashMap<String, PseudoImage>();
+	public Map<String, PseudoImage> imageStack = new HashMap<String, PseudoImage>();
 	
-	private int threadCount;
+	int threadCount;
 	
 	public ImageDownloadManager(int threadCount)
 	{
 		this.threadCount = threadCount;
-		
-		imageDownloaderObjects = new ImageDownloader[threadCount];
-		imageDownloadThreads = new Thread[threadCount];
+
+		this.imageDownloaderObjects = new ImageDownloader[threadCount];
+		this.imageDownloadThreads = new Thread[threadCount];
 	}
 	
 	/**
@@ -29,8 +29,10 @@ public class ImageDownloadManager
 	{
 		for(int i=0;i<threadCount;i++)
 		{
-			imageDownloaderObjects[i] = new ImageDownloader(); // Create the object
-			imageDownloadThreads[i] = new Thread(imageDownloaderObjects[i]); // Create the thread
+			imageDownloaderObjects[i] = new ImageDownloader(this);
+			
+			imageDownloadThreads[i] = new Thread(imageDownloaderObjects[i]);
+			imageDownloadThreads[i].start();
 		}
 	}
 }

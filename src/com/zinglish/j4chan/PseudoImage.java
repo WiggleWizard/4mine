@@ -7,6 +7,8 @@ public class PseudoImage
 	public String url;
 	public int expectedSize;
 	
+	public boolean locked = false;
+	
 	public PseudoImage(String name, String extension, String url, int expectedSize)
 	{
 		this.name = name;
