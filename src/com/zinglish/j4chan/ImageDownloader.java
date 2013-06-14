@@ -30,57 +30,50 @@ public class ImageDownloader implements Runnable
 			if(downloadManager.imageStack.size() > 0)
 			{
 				// Loop through all the images and find an unlocked image
-				for(PseudoImage image : downloadManager.imageStack)
-				{					
-					if(image == null)
-					{
-						continue;
-					}
+				PseudoImage image = downloadManager.getUnlockedImage();
+			
+				if(image != null)
+				{
+					String imageFilename = image.name + image.extension;
+					URL imageURL;
 				
-					if(!image.locked)
+					// Read the stream from URL and put it into the file
+					try
 					{
-						image.locked = true; // Lock the image
-						String imageFilename = image.name + image.extension;
-						URL imageURL;
-					
-						// Read the stream from URL and put it into the file
-						try
-						{
-							imageURL = new URL(image.url);
-							HttpURLConnection connection = (HttpURLConnection) imageURL.openConnection();
-							connection.addRequestProperty("User-Agent", this.userAgent);
-							connection.connect();
-							
-							InputStream in = connection.getInputStream();
-							OutputStream file = new FileOutputStream(Main.imageSavePath + imageFilename);
-					
-							byte[] buf=new byte[2048];
-							int bytes_read;
-							
-					        while ((bytes_read = in.read(buf)) != -1)
-					        {
-					        	file.write(buf, 0, bytes_read);
-					        }
-					        
-					        connection.disconnect();
-					        file.close();
-					        in.close();
-					        
-					        System.out.println("Downloaded image: " + image.name + image.extension);
-						}
-						catch (IOException e)
-						{
-							e.printStackTrace();
-						}
+						imageURL = new URL(image.url);
+						HttpURLConnection connection = (HttpURLConnection) imageURL.openConnection();
+						connection.addRequestProperty("User-Agent", this.userAgent);
+						connection.connect();
 						
-						downloadManager.imageStackManipulation(image, false); // Pop the index off the stack immediately after fetching it
+						InputStream in = connection.getInputStream();
+						OutputStream file = new FileOutputStream(Main.imageSavePath + imageFilename);
+				
+						byte[] buf=new byte[2048];
+						int bytes_read;
+						
+				        while ((bytes_read = in.read(buf)) != -1)
+				        {
+				        	file.write(buf, 0, bytes_read);
+				        }
+				        
+				        connection.disconnect();
+				        file.close();
+				        in.close();
+				        
+				        System.out.println("Downloaded image: " + image.name + image.extension);
 					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+					
+					downloadManager.remove(image); // Pop the index off the stack immediately after fetching it
 				}
 			}
 			else // If there is nothing in the DL stack, the thread waits longer for the stack to build
 			{
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

@@ -31,18 +31,35 @@ public class ImageDownloadManager
 		}		
 	}
 	
-	public void imageStackManipulation(PseudoImage image, boolean add)
+	public synchronized PseudoImage getUnlockedImage()
 	{
-		synchronized(this){
-			if(add)
+		PseudoImage tmp = null;
+		
+		for(PseudoImage image : this.imageStack)
+		{					
+			if(image == null)
 			{
-				this.imageStack.add(image);
+				continue;
 			}
-			else
+			else if(!image.locked)
 			{
-				this.imageStack.remove(image);
+				tmp = image;
+				image.locked = true;
+				
+				break;
 			}
 		}
 		
+		return tmp;
+	}
+	
+	public synchronized void add(PseudoImage image)
+	{
+		imageStack.add(image);
+	}
+	
+	public synchronized void remove(PseudoImage image)
+	{
+		imageStack.remove(image);
 	}
 }
