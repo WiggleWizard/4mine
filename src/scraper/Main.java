@@ -105,14 +105,14 @@ public class Main
 						if(j4ChanPost.imageID > 0)
 						{
 							System.out.println("Image found: http://images.4chan.org/" + board + "/src/" + j4ChanPost.imageID + j4ChanPost.imageExtension);
-							imageDownloader.imageStack.put(String.valueOf(j4ChanPost.number),
+							imageDownloader.imageStackManipulation(
 									new PseudoImage(
 										j4ChanPost.imageName, 
 										j4ChanPost.imageExtension,
 										"http://images.4chan.org/" + board + "/src/" + j4ChanPost.imageID + j4ChanPost.imageExtension,
 										j4ChanPost.imageSize
-									)
-							);
+									), true
+								);
 						}
 					}
 					

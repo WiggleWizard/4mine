@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.Map;
 
 import scraper.Main;
@@ -29,11 +30,8 @@ public class ImageDownloader implements Runnable
 			if(downloadManager.imageStack.size() > 0)
 			{
 				// Loop through all the images and find an unlocked image
-				for(Map.Entry<String, PseudoImage> entry : downloadManager.imageStack.entrySet())
-				{
-					// Get a pseudo image off the stack
-					PseudoImage image = entry.getValue();
-					
+				for(PseudoImage image : downloadManager.imageStack)
+				{					
 					if(image == null)
 					{
 						continue;
@@ -41,7 +39,7 @@ public class ImageDownloader implements Runnable
 				
 					if(!image.locked)
 					{
-						downloadManager.imageStack.get(entry.getKey()).locked = true; // Lock the image
+						image.locked = true; // Lock the image
 						String imageFilename = image.name + image.extension;
 						URL imageURL;
 					
@@ -75,11 +73,9 @@ public class ImageDownloader implements Runnable
 							e.printStackTrace();
 						}
 						
-						downloadManager.imageStack.remove(entry.getKey()); // Pop the index off the stack immediately after fetching it
+						downloadManager.imageStackManipulation(image, false); // Pop the index off the stack immediately after fetching it
 					}
 				}
-				
-				
 			}
 			else // If there is nothing in the DL stack, the thread waits longer for the stack to build
 			{
