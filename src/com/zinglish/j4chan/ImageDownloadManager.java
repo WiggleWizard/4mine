@@ -31,6 +31,11 @@ public class ImageDownloadManager
 		}		
 	}
 	
+	/**
+	 * Get an image that is not being downloaded or used by another thread
+	 * 
+	 * @return
+	 */
 	public synchronized PseudoImage getUnlockedImage()
 	{
 		PseudoImage tmp = null;
@@ -53,6 +58,11 @@ public class ImageDownloadManager
 		return tmp;
 	}
 	
+	/**
+	 * Add pseudo image to stack
+	 * 
+	 * @param image
+	 */
 	public synchronized void add(PseudoImage image)
 	{
 		imageStack.add(image);

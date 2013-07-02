@@ -6,8 +6,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.Map;
 
 import scraper.Main;
 
@@ -24,14 +22,13 @@ public class ImageDownloader implements Runnable
 	
 	public void run()
 	{
-		// Loop through the image URLs and download each one to the correct directory
 		while(true)
 		{
 			if(downloadManager.imageStack.size() > 0)
 			{
-				// Loop through all the images and find an unlocked image
 				PseudoImage image = downloadManager.getUnlockedImage();
 			
+				// Sometimes the stack can be empty and return no images
 				if(image != null)
 				{
 					String imageFilename = image.name + image.extension;
@@ -72,12 +69,7 @@ public class ImageDownloader implements Runnable
 			}
 			else // If there is nothing in the DL stack, the thread waits longer for the stack to build
 			{
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				try{ Thread.sleep(1000); } catch (InterruptedException e){ e.printStackTrace(); }
 			}
 		}
 	}

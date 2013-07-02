@@ -117,26 +117,12 @@ public class Main
 					}
 					
 					// Sleep for 1 second, giving the 4chan API a breather
-					try
-					{
-						Thread.sleep(1000);
-					}
-					catch (InterruptedException e)
-					{
-						e.printStackTrace();
-					}
+					try{ Thread.sleep(1000); } catch (InterruptedException e){ e.printStackTrace(); }
 				}
 			}
 			
 			 // Wait until next check interval
-			try
-			{
-				Thread.sleep(boardCheckInterval * 60 * 1000);
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
+			try{ Thread.sleep(boardCheckInterval * 60 * 1000); } catch (InterruptedException e){ e.printStackTrace(); }
 		}
 	}
 }
